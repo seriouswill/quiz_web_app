@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block title %}<title>Quiz Time</title>{% endblock %}
+
+{% block body %}
+{% block nav %}{% endblock %}
+
+<h1>HOME Page</h1>
+
+<div class="container">
+    {% if "user" in session %}
+    <a href="/login"><button class="btn btn-warning">PROFILE</button></a>
+    {% else %}
+    <a href="/login"><button class="btn btn-warning">LOG IN</button></a>
+    {% endif %}
+    <a href="/quiz"><button class="btn btn-primary">QUIZ</button></a>
+    <a href="/logout"><button class="btn btn-danger">LOG OUT</button></a>
+</div>
+{% if days_completed < 1 %}
+<h3>Welcome to your quiz zone!</h3>
+{% else %}
+<div>
+    <h3>Quiz Days Completed: {{days_completed}}</h3>
+</div>
+{% endif %}
+
+
+{% endblock %}

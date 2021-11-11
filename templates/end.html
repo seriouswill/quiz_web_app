@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+{% block title %}<title>Quiz Time</title>{% endblock %}
+
+{% block body %}
+<h1>THIS IS THE END</h1>
+
+<p>Well done {{user}}, your results are as follows:</p>
+
+<h2>Right Answers: {{score}}!</h2>
+
+<h2>Wrong Answers: {{wrong}}!</h2>
+
+<a href="/"><button class="btn btn-danger">HOME</button></a>
+
+{% endblock %}

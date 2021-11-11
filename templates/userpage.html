@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+
+{% block title %} User Page {% endblock %}
+
+{% block body %}
+<h1>WELCOME {{user}}</h1>
+
+<p>Your results are as follows:</p>
+{% if days_completed < 1 %}
+<h3>You have completed no quizzes yet!</h3>
+{% else %}
+
+{% for i in range(days_completed) %}
+<h3>Day {{days[days_completed - 1]}}: Quiz Results: {{score}} out of 10</h3>
+{% endfor %}
+{% endif %}
+<div class="container">
+    <a href="/quiz"><button class="btn btn-primary">QUIZ</button></a>
+    <a href="/logout"><button class="btn btn-danger">LOG OUT</button></a>
+</div>
+
+
+{% endblock %}
