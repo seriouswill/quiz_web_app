@@ -3,24 +3,31 @@
 {% block body %}
 <h1> This is the quiz!</h1>
 <div class="card">
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            {% for msg in messages %}
+            <p>{{msg}}</p>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
 {% if ready == False %}
     <h3>Click Next To Begin</h3>
 {% else %}
 <div class="container">
 <div class="card-body" id="questionbox">
-    <h3>{{my_questions[q_index]["question"]}}</h3>
+    <h3>{{day_one_questions[q_index]["question"]}}</h3>
 </div>
 
 <div class="card-body" id="answerbox">
     <form action="/next/" method="post">
-    <h4>{{my_questions[q_index]["answers"]["a"]}}</h4><input value="a" type="checkbox" class="form-check-input" name="answer" id="answerA">
-    <h4>{{my_questions[q_index]["answers"]["b"]}}</h4><input value="b" type="checkbox" class="form-check-input" name="answer" id="answerB">
-    <h4>{{my_questions[q_index]["answers"]["c"]}}</h4><input value="c" type="checkbox" class="form-check-input" name="answer" id="answerC">
+    <h4>{{day_one_questions[q_index]["answers"]["a"]}}</h4><input value="a" type="checkbox" class="form-check-input" name="answer" id="answerA">
+    <h4>{{day_one_questions[q_index]["answers"]["b"]}}</h4><input value="b" type="checkbox" class="form-check-input" name="answer" id="answerB">
+    <h4>{{day_one_questions[q_index]["answers"]["c"]}}</h4><input value="c" type="checkbox" class="form-check-input" name="answer" id="answerC">
     
 </div>
 
 <div class="card-body" id="scorebox">
-    <span>Your current score is: {{score}} out of {{q_index}}</span>
+    <span>Your current score is: {{day_scores[days_completed]}} out of {{q_index}}</span>
 </div>
 
 {% endif %}

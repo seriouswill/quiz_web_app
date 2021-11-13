@@ -7,9 +7,27 @@
 <h1>Choose Your Day</h1>
 <p>Once you complete a quiz, you cannot return to it...!</p>
 <div class="container">
-    <a href="/quiz/"><button class="btn day">DAY ONE</button></a>
-    <a href="#"><button class="btn day">DAY TWO</button></a>
-    <a href="#"><button class="btn day">DAY THREE</button></a>
-    <a href="#"><button class="btn day">DAY FOUR</button></a>
-    <a href="#"><button class="btn day">DAY FIVE</button></a>
+    {% if days_completed < 1 %}
+    <a href="/quiz/"><button class="btn btn-secondary day">DAY ONE</button></a>
+    {% elif days_completed < 2 %}
+    <a href="#"><button class="btn  btn-secondary day">DAY TWO</button></a>
+    {% elif days_completed < 3 %}
+    <a href="#"><button class="btn  btn-secondary day">DAY THREE</button></a>
+    {% elif days_completed < 4 %}
+    <a href="#"><button class="btn  btn-secondary day">DAY FOUR</button></a>
+    {% elif days_completed < 5 %}
+    <a href="#"><button class="btn  btn-secondary day">DAY FIVE</button></a>
+    {% else %}
+    <p>Whats happened...!?</p>
+    {% endif %}
 </div>
+<div class="container">
+    {% if "user" in session %}
+    <a href="/login"><button class="btn btn-warning">PROFILE</button></a>
+    {% else %}
+    <a href="/login"><button class="btn btn-warning">LOG IN</button></a>
+    {% endif %}
+    <a href="/quiz"><button class="btn btn-primary">DAYQUIZ</button></a>
+    <a href="/logout"><button class="btn btn-danger">LOG OUT</button></a>
+</div>
+{% endblock %}

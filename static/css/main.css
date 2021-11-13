@@ -17,7 +17,13 @@ h1, h2, h3, p, button, a {
 
 .day {
     width: 250px;
+    height: 250px;
+    background-color: blanchedalmond;
     text-align: center;
-    border: 1px solid;
+    border: 5px solid black;
     border-radius: 15px;
+    font-size: 68px;
+    text-transform: capitalize;
+    margin: 15px;
+
 }

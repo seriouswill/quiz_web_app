@@ -1,9 +1,22 @@
 {% extends 'base.html' %}
 
-{% block title %} User Page {% endblock %}
-
 {% block body %}
 <h1>WELCOME {{user}}</h1>
+
+{% with messages = get_flashed_messages() %}
+        {% if messages %}
+            {% for msg in messages %}
+            <p>{{msg}}</p>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
+<div class="container">
+    <form action="#" method="post">
+        <input type="email" name="email" id="email_form" placeholder="Enter your email." value="{{email if email}}">
+        <input type="submit" value="Submit">
+    </form>
+</div>
 
 <p>Your results are as follows:</p>
 {% if days_completed < 1 %}
@@ -11,10 +24,19 @@
 {% else %}
 
 {% for i in range(days_completed) %}
-<h3>Day {{days[days_completed - 1]}}: Quiz Results: {{score}} out of 10</h3>
+<h3>Day {{days[(days_completed - i) -1]}}: Quiz Results: {{day_scores[(days_completed - i) - 1]}} out of 10</h3>
+
+
+
 {% endfor %}
+<div class="container">  
+    {{ script1 | safe }}
+
+    {{ div1 | safe }}
+</div>
 {% endif %}
-<div class="container">
+
+<div class="container">  
     <a href="/quiz"><button class="btn btn-primary">QUIZ</button></a>
     <a href="/logout"><button class="btn btn-danger">LOG OUT</button></a>
 </div>
