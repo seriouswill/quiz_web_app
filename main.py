@@ -1,11 +1,24 @@
+
+# FLASK IMPORTS
 from flask import Flask, redirect, url_for, render_template, request, session, flash
 from flask_sqlalchemy import SQLAlchemy
-from quiz import my_questions
-from questions import day_one_questions
+
+# FORMS IMPORTS
+from flask_wtf import FlaskForm
+from wtforms import StringField, PasswordField, BooleanField
+from wtforms.validators import InputRequired, Email, Length
+from flask_bootstrap import Bootstrap
+from werkzeug.security import generate_password_hash, check_password_hash
+from flask_login import LoginManager, UserMixin, login_manager, login_user, login_required, logout_user, current_user
+
+# DATETIME IMPORTS
 from datetime import timedelta
 import datetime
 
-# graph imports
+# LOCAL IMPORTS
+from questions import day_one_questions
+
+# GREAPH IMPORTS
 from bokeh.embed import components
 from bokeh.resources import CDN
 from bokeh.plotting import figure, show, gridplot
@@ -14,22 +27,35 @@ from bokeh.models import PrintfTickFormatter
 
 app = Flask(__name__)
 app.secret_key = "codenationquizapp"
+bootstrap = Bootstrap(app)
+
 
 # Database stuff
-db = SQLAlchemy(app)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///users.sqlite3'
+
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database.db'
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 app.permanent_session_lifetime = timedelta(days=7)
+db = SQLAlchemy(app)
+login_manager = LoginManager()
+login_manager.init_app(app)
+login_manager.login_view = 'login'
 
 
-class users(db.Model):
-    _id = db.Column("id", db.Integer, primary_key=True)
-    name = db.Column(db.String(100))
-    email = db.Column(db.String(100))
+class User(UserMixin, db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String(15), unique=True)
+    email = db.Column(db.String(50), unique=True)
+    password = db.Column(db.String(80))
 
-    def __init__(self, name, email):
-        self.name = name
-        self.email = email
+    # def __init__(self, username, email, password):
+    #     self.username = username
+    #     self.email = email
+    #     self.password = password
+
+
+@login_manager.user_loader
+def load_user(user_id):
+    return User.query.get(user_id)
 
 
 # global variables
@@ -44,6 +70,69 @@ days = ["Monday", "Tuesday", "Wednesday",
         "Thursday", "Friday", "Saturday", "Sunday"]
 day = 0
 weekday = datetime.datetime.today().weekday()
+
+
+# ~~~~~~~~~~~~~~~~~ SIGN UP SECTION
+
+
+class LoginForm(FlaskForm):
+    username = StringField('username',
+                           validators=[InputRequired(), Length(min=4, max=17)])
+    password = PasswordField('password',
+                             validators=[InputRequired(), Length(min=8, max=80)])
+    remember = BooleanField('remember me')
+
+
+class RegisterForm(FlaskForm):
+    username = StringField('username',
+                           validators=[InputRequired(), Length(min=4, max=17)])
+    password = PasswordField('password',
+                             validators=[InputRequired(), Length(min=8, max=80)])
+    email = StringField('email', validators=[InputRequired(), Email(
+        message="Invalid Email"), Length(max=50)])
+
+
+@app.route('/signup/', methods=["GET", "POST"])
+def signup():
+    form = RegisterForm()
+
+    if form.validate_on_submit():
+        hashed_password = generate_password_hash(
+            form.password.data, method="sha256")
+        new_user = User(username=form.username.data,
+                        email=form.email.data, password=hashed_password)
+        db.session.add(new_user)
+        db.session.commit()
+
+        return "New user has been created"
+        # return '<h1>' + form.username.data + form.password.data + '</h1>'
+
+    return render_template('signup.html', form=form)
+
+
+@app.route('/login2/', methods=["GET", "POST"])
+def login2():
+    form = LoginForm()
+
+    if form.validate_on_submit():
+        user = User.query.filter_by(username=form.username.data).first()
+        if user:
+            if check_password_hash(user.password, form.password.data):
+                login_user(user, remember=form.remember.data)
+                return redirect(url_for('user'))
+        return '<h1> Invalid Username or Password </h1>'
+        # return '<h1>' + form.username.data + form.password.data + '</h1>'
+
+    return render_template('login2.html', form=form)
+
+
+@app.route('logout2')
+@login_required
+def logout2():
+    logout_user()
+    return redirect(url_for('/index/'))
+
+# ~~~~~~~~~~~~~~~~~~~~~ ROUTES SECTION
 
 
 @app.route('/')
@@ -99,6 +188,7 @@ def login():
 
 
 @app.route('/user', methods=["POST", "GET"])
+@login_required
 def user():
     global days2, day_scores
     # create a new plot with a title and axis labels
@@ -113,22 +203,23 @@ def user():
     cdn_js = CDN.js_files[0]
     cdn_css = CDN.css_files
     email = None
-    if "user" in session:
-        user = session["user"]
+    # if "user" in session:
+    #     user = session["user"]
 
-        if request.method == "POST":
-            email = request.form["email"]
-            session["email"] = email
-            found_user = users.query.filter_by(name=user).first()
-            found_user.email = email
-            db.session.commit()
-            flash(f"Your email, {email}, has been saved.")
-        else:
-            if email in session:
-                email = session["email"]
-        return render_template('userpage.html', user=user, email=email, days_completed=days_completed, days=days, day=day, day_scores=day_scores, script1=script1, div1=div1, cdn_js=cdn_js, cdn_css=cdn_css)
-    else:
-        return redirect(url_for("login"))
+    #     if request.method == "POST":
+    #         email = request.form["email"]
+    #         session["email"] = email
+    #         found_user = users.query.filter_by(name=user).first()
+    #         found_user.email = email
+    #         db.session.commit()
+    #         flash(f"Your email, {email}, has been saved.")
+    #     else:
+    #         if email in session:
+    #             email = session["email"]
+    return render_template('userpage.html', user=user, name=current_user.username, email=email, days_completed=days_completed, days=days,
+                           day=day, day_scores=day_scores, script1=script1, div1=div1, cdn_js=cdn_js, cdn_css=cdn_css)
+    # else:
+    #     return redirect(url_for("login"))
 
 
 @app.route('/logout/')
@@ -136,6 +227,7 @@ def logout():
     global days_completed
 
     days_completed = 0
+
     if "user" in session:
         user = session["user"]
         flash(f"You have been logged out sucessfully, {user}.", "info")
