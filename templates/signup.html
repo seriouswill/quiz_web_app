@@ -1,8 +1,6 @@
 {% extends "base.html" %}
 {% import "bootstrap/wtf.html" as wtf %}
-{% block title %}
-Sign Up
-{% endblock %}
+
 
 
 
@@ -17,6 +15,7 @@ Sign Up
     {{ wtf.form_field(form.password) }}
     
     <button class="btn btn-lg btn-primary btn-block" type="submit">Sign Up</button>
+    <a href="/login"><button class="btn btn-lg btn-secondary btn-block" type="button">Sign In</button></a>
   </form>
 
 </div> <!-- /container -->

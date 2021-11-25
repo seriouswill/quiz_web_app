@@ -1,28 +1,29 @@
-{% extends 'base.html' %}
-
-{% block title %} Login Page {% endblock %}
-
-{% block body %}
-<h1>THIS IS THE LOG IN PAGE</h1>
-    {% with messages = get_flashed_messages() %}
-        {% if messages %}
-            {% for msg in messages %}
-            <p>{{msg}}</p>
-            {% endfor %}
-        {% endif %}
-    {% endwith %}
-<form action="#" method="post">
-    <p>Name:</p>
-    <p><input type="text" name="nm" id="namebox"></p>
-    <p><input type="submit" value="submit" id="namesubmit"></p>
-
-</form>
-
-<p>Youre results are as follows:</p>
-
-<!-- GRAPH SECTION -->
+{% extends "base.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
 
 
-<a href="/daychoice"><button class="btn btn-danger">PROCEED</button></a>
-<a href="/"><button class="btn btn-primary">HOME</button></a>
+
+{% block styles %}
+
+<link rel="stylesheet" href="{{url_for('.static', filename='signin.css')}}">
+{% endblock %}
+
+{% block content %}
+    <div class="container">
+
+      <form class="form-signin" method="POST" action="/login/">
+        <h2 class="form-signin-heading">Please sign in</h2>
+        {{ form.hidden_tag() }}
+        {{ wtf.form_field(form.username) }}
+        {{ wtf.form_field(form.password) }}
+        {{ wtf.form_field(form.remember) }}
+        
+        
+        <button class="btn btn-lg btn-primary btn-block" type="submit">Sign In</button>
+        <a href="/signup/">
+          <button class="btn btn-lg btn-primary btn-block" action="/signup/" type="button">Sign Up</button>
+        </a>
+        
+    </form>
+</div> <!-- /container -->
 {% endblock %}

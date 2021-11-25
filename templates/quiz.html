@@ -15,15 +15,25 @@
 {% else %}
 <div class="container">
 <div class="card-body" id="questionbox">
+    {% if days_completed < 1 %}
     <h3>{{day_one_questions[q_index]["question"]}}</h3>
+    {% elif days_completed < 2 %}
+    <h3>{{day_two_questions[q_index]["question"]}}</h3>
+    {% endif %}
 </div>
 
 <div class="card-body" id="answerbox">
     <form action="/next/" method="post">
+        
+        {% if days_completed < 1 %}
     <h4>{{day_one_questions[q_index]["answers"]["a"]}}</h4><input value="a" type="checkbox" class="form-check-input" name="answer" id="answerA">
     <h4>{{day_one_questions[q_index]["answers"]["b"]}}</h4><input value="b" type="checkbox" class="form-check-input" name="answer" id="answerB">
     <h4>{{day_one_questions[q_index]["answers"]["c"]}}</h4><input value="c" type="checkbox" class="form-check-input" name="answer" id="answerC">
-    
+        {% elif days_completed < 2 %}
+    <h4>{{day_two_questions[q_index]["answers"]["a"]}}</h4><input value="a" type="checkbox" class="form-check-input" name="answer" id="answerA">
+    <h4>{{day_two_questions[q_index]["answers"]["b"]}}</h4><input value="b" type="checkbox" class="form-check-input" name="answer" id="answerB">
+    <h4>{{day_two_questions[q_index]["answers"]["c"]}}</h4><input value="c" type="checkbox" class="form-check-input" name="answer" id="answerC">
+        {% endif %}
 </div>
 
 <div class="card-body" id="scorebox">

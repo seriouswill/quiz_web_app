@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+
+{% block title %} Login Page {% endblock %}
+
+{% block body %}
+<h1>THIS IS THE LOG IN PAGE</h1>
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            {% for msg in messages %}
+            <p>{{msg}}</p>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+<form action="#" method="post">
+    <p>Name:</p>
+    <p><input type="text" name="nm" id="namebox"></p>
+    <p><input type="submit" value="submit" id="namesubmit"></p>
+
+</form>
+
+<p>Youre results are as follows:</p>
+
+<!-- GRAPH SECTION -->
+
+
+<a href="/daychoice"><button class="btn btn-danger">PROCEED</button></a>
+<a href="/"><button class="btn btn-primary">HOME</button></a>
+{% endblock %}

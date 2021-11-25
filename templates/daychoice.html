@@ -10,7 +10,7 @@
     {% if days_completed < 1 %}
     <a href="/quiz/"><button class="btn btn-secondary day">DAY ONE</button></a>
     {% elif days_completed < 2 %}
-    <a href="#"><button class="btn  btn-secondary day">DAY TWO</button></a>
+    <a href="/quiz/"><button class="btn  btn-secondary day">DAY TWO</button></a>
     {% elif days_completed < 3 %}
     <a href="#"><button class="btn  btn-secondary day">DAY THREE</button></a>
     {% elif days_completed < 4 %}
@@ -22,8 +22,8 @@
     {% endif %}
 </div>
 <div class="container">
-    {% if "user" in session %}
-    <a href="/login"><button class="btn btn-warning">PROFILE</button></a>
+    {% if current_user.username %}
+    <a href="/user"><button class="btn btn-warning">PROFILE</button></a>
     {% else %}
     <a href="/login"><button class="btn btn-warning">LOG IN</button></a>
     {% endif %}

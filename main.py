@@ -5,6 +5,7 @@ from flask_sqlalchemy import SQLAlchemy
 
 # FORMS IMPORTS
 from flask_wtf import FlaskForm
+from sqlalchemy.orm import backref
 from wtforms import StringField, PasswordField, BooleanField
 from wtforms.validators import InputRequired, Email, Length
 from flask_bootstrap import Bootstrap
@@ -16,7 +17,7 @@ from datetime import timedelta
 import datetime
 
 # LOCAL IMPORTS
-from questions import day_one_questions
+from questions import day_one_questions, day_two_questions
 
 # GREAPH IMPORTS
 from bokeh.embed import components
@@ -46,14 +47,30 @@ class User(UserMixin, db.Model):
     username = db.Column(db.String(15), unique=True)
     email = db.Column(db.String(50), unique=True)
     password = db.Column(db.String(80))
+    image_file = db.Column(
+        db.String(20), default='./static/images.default.jpg')
+    user_days_completed = db.Column(db.Integer, default=0)
+    score = db.relationship('Score', backref='username', lazy=True)
 
-    # def __init__(self, username, email, password):
-    #     self.username = username
-    #     self.email = email
-    #     self.password = password
+    def __repr__(self):
+        return f"{self.username} = username, {self.email} = email, {self.password} = password"
 
 
-@login_manager.user_loader
+class Score(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    monday_score = db.Column(db.Integer, default=0)
+    tuesday_score = db.Column(db.Integer, default=0)
+    wednesday_score = db.Column(db.Integer, default=0)
+    thursday_score = db.Column(db.Integer, default=0)
+    friday_score = db.Column(db.Integer, default=0)
+    total_score = db.Column(db.Integer, default=0)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+
+    def __repr__(self):
+        return f"Score:  {self.monday_score} Tuesday: {self.tuesday_score}."
+
+
+@ login_manager.user_loader
 def load_user(user_id):
     return User.query.get(user_id)
 
@@ -62,8 +79,9 @@ def load_user(user_id):
 ready = False
 q_index = 0
 score = 0
-day_scores = [0, 0, 0, 0, 0, 0, 0]
-days2 = [1, 2, 3, 4, 5, 6, 7]
+day_scores = [0, 0, 0, 0, 0]
+user_daily_scores = [Score.monday_score, ]
+days2 = [1, 2, 3, 4, 5]
 wrong = 0
 days_completed = 0
 days = ["Monday", "Tuesday", "Wednesday",
@@ -92,7 +110,7 @@ class RegisterForm(FlaskForm):
         message="Invalid Email"), Length(max=50)])
 
 
-@app.route('/signup/', methods=["GET", "POST"])
+@ app.route('/signup/', methods=["GET", "POST"])
 def signup():
     form = RegisterForm()
 
@@ -104,14 +122,14 @@ def signup():
         db.session.add(new_user)
         db.session.commit()
 
-        return "New user has been created"
+        return redirect(url_for('user'))
         # return '<h1>' + form.username.data + form.password.data + '</h1>'
 
     return render_template('signup.html', form=form)
 
 
-@app.route('/login2/', methods=["GET", "POST"])
-def login2():
+@app.route('/login/', methods=["GET", "POST"])
+def login():
     form = LoginForm()
 
     if form.validate_on_submit():
@@ -123,68 +141,21 @@ def login2():
         return '<h1> Invalid Username or Password </h1>'
         # return '<h1>' + form.username.data + form.password.data + '</h1>'
 
-    return render_template('login2.html', form=form)
+    return render_template('login.html', form=form)
 
 
-@app.route('logout2')
+@app.route('/logout/')
 @login_required
-def logout2():
+def logout():
     logout_user()
-    return redirect(url_for('/index/'))
+    return redirect(url_for('login'))
 
 # ~~~~~~~~~~~~~~~~~~~~~ ROUTES SECTION
 
 
 @app.route('/')
 def home():
-    return render_template("index.html", score=0, q_index=0, wrong=0, days_completed=days_completed)
-
-# view class results sections
-
-
-@app.route('/view')
-def view():
-    return render_template("view.html", values=users.query.all())
-
-
-@app.route('/daychoice')
-def daychoice():
-    return render_template("daychoice.html", days_completed=days_completed, days=days, weekday=weekday)
-
-
-@app.route('/quiz/')
-def quiz():
-    global days_completed
-    if "user" != session:
-        flash(f"You should log in to store your results!")
-    if days_completed > 5:
-        days_completed = 0
-    return render_template("quiz.html", day_one_questions=day_one_questions, q_index=0,
-                           ready=False, day_scores=day_scores, wrong=0)
-
-
-@app.route('/login/', methods=["POST", "GET"])
-def login():
-    if request.method == "POST":
-        session.permanent = True
-        user = request.form["nm"]
-        session["user"] = user
-        session["days_completed"] = days_completed
-        found_user = users.query.filter_by(name=user).first()
-        if found_user:
-            session["email"] = found_user.email
-        else:
-            usr = users(user, "")
-            db.session.add(usr)
-            db.session.commit()
-        flash(f"You have been logged in sucessfully, {user}.", "info")
-        return redirect(url_for("user", user=user))
-
-    else:
-        if "user" in session:
-            flash(f"You are already logged in!")
-            return redirect(url_for("user"))
-        return render_template('login.html')
+    return render_template("index.html", score=0, q_index=0, wrong=0, days_completed=current_user.user_days_completed)
 
 
 @app.route('/user', methods=["POST", "GET"])
@@ -220,29 +191,38 @@ def user():
                            day=day, day_scores=day_scores, script1=script1, div1=div1, cdn_js=cdn_js, cdn_css=cdn_css)
     # else:
     #     return redirect(url_for("login"))
+# view class results sections
 
 
-@app.route('/logout/')
-def logout():
+@app.route('/view')
+def view():
+    return render_template("view.html", values=User.query.all())
+
+
+@app.route('/daychoice')
+def daychoice():
+    return render_template("daychoice.html", days_completed=days_completed, days=days, weekday=weekday)
+
+
+@app.route('/quiz/')
+def quiz():
     global days_completed
-
-    days_completed = 0
-
-    if "user" in session:
-        user = session["user"]
-        flash(f"You have been logged out sucessfully, {user}.", "info")
-    session.pop("user", None)
-    session.pop("email", None)
-    return redirect(url_for('login'))
+    if "user" != session:
+        flash(f"You should log in to store your results!")
+    if days_completed > 5:
+        days_completed = 0
+    return render_template("quiz.html", day_one_questions=day_one_questions, day_two_questions=day_two_questions, q_index=0,
+                           ready=False, day_scores=day_scores, wrong=0)
 
 
+# @login required - this is throwing an error, might need to rename login to login
 @app.route('/start/',  methods=["POST", "GET"])
 def start():
     global ready
     ready = True
     db.session.commit()
     return render_template('/quiz.html', day_one_questions=day_one_questions, q_index=q_index,
-                           ready=ready, day_scores=day_scores, days_completed=days_completed)
+                           ready=ready, day_scores=day_scores, days_completed=days_completed, day_two_questions=day_two_questions)
 
 
 @app.route('/next/',  methods=["POST", "GET"])
@@ -252,28 +232,43 @@ def next():
     if request.method == 'POST':
         session.permanent = True
         choice = request.form.get("answer", type=str)
-        if choice == day_one_questions[q_index]["correctAnswer"]:
-            day_scores[days_completed] += 1
-        else:
-            wrong += 1
-
+        if days_completed == 0:
+            if choice == day_one_questions[q_index]["correctAnswer"]:
+                day_scores[days_completed] += 1
+            else:
+                wrong += 1
+            new_score = Score(monday_score=day_scores[days_completed])
+            db.session.add(new_score)
+        elif days_completed == 1:
+            if choice == day_two_questions[q_index]["correctAnswer"]:
+                day_scores[days_completed] += 1
+            else:
+                wrong += 1
+            new_score = Score(tuesday_score=day_scores[days_completed])
+            db.session.add(new_score)
+        db.session.commit()
     if q_index < 9:
         q_index += 1
     else:
         q_index = 0
-        #day_scores[days_completed] = score
+        # day_scores[days_completed] = score
         days_completed += 1
+        try:
+            new_user_daily_score = User(user_days_completed=days_completed)
+            db.session.add(new_user_daily_score)
+            db.session.commit()
+
+        except:
+            print("There has been an error updating user_days_completed")
+
         day += 1
 
-        if "user" in session:
-            user = session["user"]
-            return render_template('end.html', day_scores=day_scores, wrong=wrong, user=user, days_completed=days_completed)
-        else:
-            return render_template('end.html', day_scores=day_scores, wrong=wrong, days_completed=days_completed)
+        return render_template('end.html', day_scores=day_scores, wrong=wrong, user=current_user.username, days_completed=days_completed)
+
         # if my_questions[q_index]["answers"]["c"] == my_questions[0]["correctAnswer"]:
         #     print("Well done")
 
-    return render_template('/quiz.html', day_one_questions=day_one_questions, q_index=q_index,
+    return render_template('/quiz.html', day_one_questions=day_one_questions, day_two_questions=day_two_questions, q_index=q_index,
                            ready=ready, day_scores=day_scores, wrong=wrong, days_completed=days_completed)
 
 

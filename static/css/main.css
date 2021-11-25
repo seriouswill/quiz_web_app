@@ -13,6 +13,7 @@ body {
 
 h1, h2, h3, p, button, a {
     text-align: center;
+    align-items: center;
 }
 
 .day {
@@ -26,4 +27,9 @@ h1, h2, h3, p, button, a {
     text-transform: capitalize;
     margin: 15px;
 
+}
+
+.profilepic img{
+    width: 500px;
+    border-radius: 250px;
 }

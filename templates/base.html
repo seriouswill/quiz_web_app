@@ -35,7 +35,11 @@
               Profile
             </a>
             <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+              {% if current_user.username %}
+              <a class="dropdown-item" href="/user">Profile</a>
+              {% else %}
               <a class="dropdown-item" href="/login/">Log In</a>
+              {% endif %}
               <a class="dropdown-item" href="/logout">Log Out</a>
               <div class="dropdown-divider"></div>
               <a class="dropdown-item" href="/signup/">Sign Up</a>

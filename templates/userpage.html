@@ -12,10 +12,13 @@
     {% endwith %}
 
 <div class="container">
-    <form action="#" method="post">
+    <!-- <form action="#" method="post">
         <input type="email" name="email" id="email_form" placeholder="Enter your email." value="{{email if email}}">
         <input type="submit" value="Submit">
-    </form>
+    </form> -->
+    <div class="profilepic">
+        <img src="../static/images/deafult.jpg" alt="profile_picture">
+    </div>
 </div>
 
 <p>Your results are as follows:</p>
@@ -37,7 +40,7 @@
 {% endif %}
 
 <div class="container">  
-    <a href="/quiz"><button class="btn btn-primary">QUIZ</button></a>
+    <a href="/daychoice"><button class="btn btn-primary">QUIZ</button></a>
     <a href="/logout"><button class="btn btn-danger">LOG OUT</button></a>
 </div>
 

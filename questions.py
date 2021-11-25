@@ -80,3 +80,85 @@ day_one_questions = [{
     },
     "correctAnswer": "c",
 }]
+
+day_two_questions = [{
+    "question": "What is the naming convention called in Python?",
+    "answers": {
+        "a": "Python case",
+        "b": "Camel case",
+        "c": "Snake Case",
+    },
+    "correctAnswer": "c",
+}, {
+    "question": "Which of these is an illegal naming convention in Python?",
+    "answers": {
+        "a": "ThisVariable",
+        "b": "this_variable",
+        "c": "this-variable",
+    },
+    "correctAnswer": "c",
+}, {
+    "question": "What do we have to do to let Python know the data type stored in the variable?",
+    "answers": {
+        "a": "Nothing",
+        "b": "Use the '==' sign",
+        "c": "Use the var keyword",
+    },
+    "correctAnswer": "a",
+}, {
+    "question": "What kind of language is Python?",
+    "answers": {
+        "a": "Dynamically Typed",
+        "b": "Strictly Typed",
+        "c": "Loosely Typed",
+    },
+    "correctAnswer": "c",
+}, {
+    "question": "What character do we place at the beginning of a string to allow variable interpolation?",
+    "answers": {
+        "a": "print()",
+        "b": "f",
+        "c": ".format()",
+    },
+    "correctAnswer": "b",
+}, {
+    "question": "You have two variables inside your .format method. The first is called 'Two', the second is called 'One'. Which will appear first in your string?",
+    "answers": {
+        "a": "One",
+        "b": "Two",
+        "c": "Neither",
+    },
+    "correctAnswer": "b",
+}, {
+    "question": "Which character is used to let Python know to ignore the interpretation of the subsequent character?",
+    "answers": {
+        "a": "\\",
+        "b": "/",
+        "c": "|",
+    },
+    "correctAnswer": "a",
+}, {
+    "question": "What value will the '%' operator return when placed between '5' and '2'? ",
+    "answers": {
+        "a": "0",
+        "b": "1",
+        "c": "3",
+    },
+    "correctAnswer": "b",
+}, {
+    "question": "Which of these characters is the assign operator?",
+    "answers": {
+        "a": "=",
+        "b": "**",
+        "c": "==",
+    },
+    "correctAnswer": "a",
+}, {
+    "question": "After which character do you always indent the subsequent line?",
+    "answers": {
+        "a": "=",
+        "b": ":",
+        "c": ";",
+    },
+    "correctAnswer": "b",
+}]

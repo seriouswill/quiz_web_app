@@ -7,8 +7,8 @@
 <h1>HOME Page</h1>
 
 <div class="container">
-    {% if "user" in session %}
-    <a href="/login"><button class="btn btn-warning">PROFILE</button></a>
+    {% if current_user.username %}
+    <a href="/user"><button class="btn btn-warning">PROFILE</button></a>
     {% else %}
     <a href="/login"><button class="btn btn-warning">LOG IN</button></a>
     {% endif %}
@@ -16,9 +16,9 @@
     <a href="/logout"><button class="btn btn-danger">LOG OUT</button></a>
     <a href="/chart"><button class="btn btn-secondary">CHART</button></a>
 </div>
-{% if days_completed < 1 %}
+{% if days_completed != True %}
 <h3>Welcome to your quiz zone!</h3>
-{% else %}
+{% elif days_completed %}
 <div>
     <h3>Quiz Days Completed: {{days_completed}}</h3>
 </div>
